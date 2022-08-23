@@ -99,7 +99,7 @@ spec:
           service:
             name: {{ $fullName }}
             port: 
-              number: {{ .Values.tabix.lb.port }}
+              number: 8088
   {{- else }}
   - host: {{ .host }}
     http:
@@ -111,7 +111,7 @@ spec:
           service:
             name: {{ $fullName }}
             port:
-              number: {{ .Values.tabix.lb.port }}
+              number: 8088
       {{- end }}
   {{- end }}
  {{- end }}
