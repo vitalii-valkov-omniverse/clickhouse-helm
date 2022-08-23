@@ -13,6 +13,18 @@ spec:
       labels:
         app: tabix
     spec:
+{{- if .Values.tabix.affinity }}
+      affinity:
+{{ toYaml .Values.tabix.affinity | indent 8 }}
+      {{- end -}}
+      {{- if .Values.tabix.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.tabix.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tabix.tolerations }}
+      tolerations:
+{{ toYaml .Values.tabix.tolerations | indent 8 }}
+      {{- end }}
       containers:
       - name: tabix
         image: "spoonest/clickhouse-tabix-web-client:latest"

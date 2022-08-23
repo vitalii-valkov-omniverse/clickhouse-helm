@@ -24,6 +24,18 @@ spec:
       labels:
         app: clickhouse-client
     spec:
+{{- if .Values.client.affinity }}
+      affinity:
+{{ toYaml .Values.client.affinity | indent 8 }}
+      {{- end -}}
+      {{- if .Values.client.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.client.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.client.tolerations }}
+      tolerations:
+{{ toYaml .Values.client.tolerations | indent 8 }}
+      {{- end }}
       containers:
         - name: clickhouse-client
           image: yandex/clickhouse-client:latest
