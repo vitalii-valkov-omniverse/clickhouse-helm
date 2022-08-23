@@ -18,23 +18,6 @@ spec:
     app: clickhouse
 
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: clickhouse
-spec:
-  type: ClusterIP
-  ports:
-  - name: rest
-    port: 8123
-    targetPort: 8123
-  - name: rpc
-    port: 9000
-    targetPort: 9000
-  selector:
-    app: clickhouse
-
----
 {{- if .Values.clickhouse.ingress.enabled -}}
 {{- $fullName := "clickhouse" -}}
 {{- $pathtype := .Values.clickhouse.ingress.pathtype -}}
