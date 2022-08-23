@@ -55,3 +55,63 @@ spec:
     app: tabix
 {{ end }}
 {{ end }}
+---
+{{- if .Values.tabix.ingress.enabled -}}
+{{- $httpPort := .Values.httpPort -}}
+{{- $pathtype := .Values.tabix.ingress.pathtype -}}
+{{- $ingressPath := .Values.tabix.ingress.path -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+{{- with .Values.tabix.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  {{- if .Values.tabix.ingress.className }}
+  ingressClassName: {{ .Values.tabix.ingress.className | quote }}
+  {{- end }}
+{{- if .Values.tabix.ingress.tls }}
+  tls:
+  {{- if .ingressPath }}
+  {{- range .Values.tabix.ingress.tls }}
+  - hosts:
+    {{- range .hosts }}
+      - {{ . }}
+    {{- end }}
+    secretName: {{ .secretName }}
+  {{- end }}
+{{- else }}
+{{ toYaml .Values.tabix.ingress.tls | indent 4 }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.tabix.ingress.hosts }}
+    {{- if $ingressPath }}
+  - host: {{ . }}
+    http:
+      paths:
+      - path: {{ $ingressPath }}
+        pathType: {{ $pathtype }}
+        backend:
+          service:
+            name: {{ $fullName }}
+            port: 
+              number: {{ $httpPort }}
+  {{- else }}
+  - host: {{ .host }}
+    http:
+      paths:
+      {{- range .paths }}
+      - path: {{ .path }}
+        pathType: {{ $pathtype }}
+        backend:
+          service:
+            name: {{ $fullName }}
+            port:
+              number: {{ .servicePort | default $httpPort }}
+      {{- end }}
+  {{- end }}
+ {{- end }}
+ {{- end }}
