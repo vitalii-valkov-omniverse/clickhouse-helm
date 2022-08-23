@@ -17,21 +17,80 @@ spec:
   selector:
     app: clickhouse
 
-{{ if .Values.clickhouse.lb.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: clickhouse-lb
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - name: rest
-    port: {{ .Values.clickhouse.lb.restPort }}
+    port: 8123
     targetPort: 8123
   - name: rpc
-    port: {{ .Values.clickhouse.lb.rpcPort }}
+    port: 9000
     targetPort: 9000
   selector:
     app: clickhouse
-{{ end }}
+
+---
+{{- if .Values.clickhouse.ingress.enabled -}}
+{{- $fullName := "clickhouse" -}}
+{{- $pathtype := .Values.clickhouse.ingress.pathtype -}}
+{{- $ingressPath := .Values.clickhouse.ingress.path -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+{{- with .Values.clickhouse.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  {{- if .Values.clickhouse.ingress.className }}
+  ingressClassName: {{ .Values.clickhouse.ingress.className | quote }}
+  {{- end }}
+{{- if .Values.clickhouse.ingress.tls }}
+  tls:
+  {{- if .ingressPath }}
+  {{- range .Values.clickhouse.ingress.tls }}
+  - hosts:
+    {{- range .hosts }}
+      - {{ . }}
+    {{- end }}
+    secretName: {{ .secretName }}
+  {{- end }}
+{{- else }}
+{{ toYaml .Values.clickhouse.ingress.tls | indent 4 }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.clickhouse.ingress.hosts }}
+    {{- if $ingressPath }}
+  - host: {{ . }}
+    http:
+      paths:
+      - path: {{ $ingressPath }}
+        pathType: {{ $pathtype }}
+        backend:
+          service:
+            name: {{ $fullName }}
+            port: 
+              number: 8123
+  {{- else }}
+  - host: {{ .host }}
+    http:
+      paths:
+      {{- range .paths }}
+      - path: {{ .path }}
+        pathType: {{ $pathtype }}
+        backend:
+          service:
+            name: {{ $fullName }}
+            port:
+              number: 8123
+      {{- end }}
+  {{- end }}
+ {{- end }}
+ {{- end }}
