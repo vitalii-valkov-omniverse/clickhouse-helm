@@ -46,7 +46,7 @@ kind: Service
 metadata:
   name: tabix
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - name: ui
     port: {{ .Values.tabix.lb.port }}
