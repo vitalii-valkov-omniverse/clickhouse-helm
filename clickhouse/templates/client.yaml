@@ -38,7 +38,7 @@ spec:
       {{- end }}
       containers:
         - name: clickhouse-client
-          image: yandex/clickhouse-client:latest
+          image: yandex/clickhouse-client:18.14
           command: ["sleep"]
           args: ["infinity"]
           resources:
