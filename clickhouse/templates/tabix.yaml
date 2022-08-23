@@ -44,7 +44,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tabix-lb
+  name: tabix
 spec:
   type: LoadBalancer
   ports:
@@ -57,6 +57,7 @@ spec:
 {{ end }}
 ---
 {{- if .Values.tabix.ingress.enabled -}}
+{{- $fullName := "tabix" -}}
 {{- $httpPort := .Values.httpPort -}}
 {{- $pathtype := .Values.tabix.ingress.pathtype -}}
 {{- $ingressPath := .Values.tabix.ingress.path -}}
