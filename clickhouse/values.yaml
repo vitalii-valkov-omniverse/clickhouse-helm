@@ -106,6 +106,9 @@ tabix:
     enabled: false
     port: 8088
 
+  ingress:
+    enabled: false
+
 # monitoring with graphite
 graphite:
   enabled: false
