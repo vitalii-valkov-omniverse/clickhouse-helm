@@ -115,3 +115,5 @@ graphite:
   lb:
     enabled: false
     port: 8080
+
+httpPort: 80
