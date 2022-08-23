@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: clickhouse-lb
+  name: clickhouse
 spec:
   type: ClusterIP
   ports:
